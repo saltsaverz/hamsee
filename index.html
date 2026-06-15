@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hamsee 🐹</title>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Pretendard 폰트 불러오기 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
@@ -927,18 +925,32 @@
             display: flex;
             justify-content: space-between;
         }
+
+        /* Firebase 환경 문제 진단 안내 모달 */
+        .firebase-error-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <!-- === 1. 입장 코드 입력 화면 === -->
     <div class="gate-container" id="gateScreen">
         <div class="gate-logo" id="gateLogo" onclick="playSqueakSound()">🐹</div>
 
-        <!-- 개발 가이드 노티 바 -->
         <div id="devDeployWarning" style="display: none; background-color: #FFF3CD; border: 1px solid #FFEBAA; color: #856404; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 0.75rem; text-align: left; max-width: 320px; line-height: 1.45;">
-            ⚠️ <strong>알림:</strong> 현재 로컬 전용(가상 아지트)으로 동작 중입니다. 외부에서 다른 기기의 친구들과 진짜 실시간 소통을 진행하려면, 소스코드 내 <code>myFirebaseConfig</code> 란에 본인의 Firebase 정보를 작성하고 배포해 주세요!
+            ⚠️ <strong>알림:</strong> 현재 로컬 전용(가상 아지트)으로 동작 중입니다. 외부에서 다른 기기의 친구들과 진짜 실시간 소통을 진행하려면, 소스코드 내 <code>firebaseConfig</code> 란에 본인의 Firebase 정보를 작성하고 배포해 주세요!
         </div>
 
         <input type="text" id="hamsterName" class="code-input" placeholder="별명을 입력하세요" maxlength="10">
@@ -946,10 +958,8 @@
         <button class="gate-btn" onclick="validateCode()">입장</button>
     </div>
 
-    <!-- === 2. 메인 트위터형 타임라인 화면 === -->
     <div class="main-container" id="mainScreen">
         <header class="header">
-            <!-- 홈 버튼 -->
             <div class="header-left-home" onclick="clickHomeButton()" title="홈 피드 새로고침">🏠</div>
             <div class="header-right">
                 <div class="room-code-badge" id="inviteLinkBtn" onclick="copyInviteLink()" title="원클릭 초대 링크 복사">
@@ -961,7 +971,6 @@
                     <i data-lucide="copy" style="width: 11px; height: 11px;"></i>
                 </div>
                 
-                <!-- 내 프로필 관리 트리거 버튼 -->
                 <button class="profile-trigger" onclick="toggleProfileModal()">
                     <span id="headerAvatar" class="profile-trigger-avatar">🐹</span>
                     <span id="headerName" style="font-weight:600; font-size:0.9rem;">햄스터</span>
@@ -970,7 +979,6 @@
             </div>
         </header>
 
-        <!-- 프로필 수정 슬라이드 폼 -->
         <div id="profileModal" class="profile-modal">
             <div class="profile-edit-box">
                 <div class="avatar-select-wrapper" onclick="toggleAvatarPicker()">
@@ -984,7 +992,6 @@
                     <button class="save-profile-btn" onclick="saveProfile()">저장 및 변경</button>
                 </div>
             </div>
-            <!-- 아바타 변경/업로드 패널 -->
             <div id="avatarPicker" class="avatar-picker-grid">
                 <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                 <div class="avatar-file-btn" onclick="triggerFileInput()">📁 내 기기에서 사진 올리기</div>
@@ -999,7 +1006,6 @@
             </div>
         </div>
 
-        <!-- 글쓰기 구역 -->
         <div class="tweet-form">
             <div id="formAvatarDisplay" class="form-avatar">🐹</div>
             <div class="form-right">
@@ -1011,22 +1017,18 @@
             </div>
         </div>
 
-        <!-- 피드 타임라인 -->
         <div class="feed" id="tweetFeed">
-            <!-- 로딩바 -->
             <div id="feedLoader" class="feed-loader-box">
                 <div class="spinner"></div>
                 <p style="margin-top: 10px;">실시간 아지트 채널에 접속 중...</p>
             </div>
             
             <div id="tweetList">
-                <!-- 동적 마운트 -->
-            </div>
+                </div>
         </div>
     </div>
 </div>
 
-<!-- === 3. 개인 프로필 조회 모달 === -->
 <div id="userProfileOverlay" class="cozy-modal-overlay" onclick="closeUserProfile(event)">
     <div class="cozy-modal" onclick="event.stopPropagation()">
         <div class="cozy-modal-header">
@@ -1050,14 +1052,12 @@
             
             <div class="profile-posts-title" id="postsTitle">작성한 글 모아보기</div>
             <div class="profile-posts-list" id="pagePostsList">
-                <!-- 동적 삽입 -->
-            </div>
+                </div>
         </div>
     </div>
 </div>
 
-<!-- === 5. Firebase 환경 설정 문제 진단 및 튜토리얼 모달 === -->
-<div id="firebaseErrorOverlay" class="cozy-modal-overlay" onclick="closeFirebaseError(event)" style="display: none;">
+<div id="firebaseErrorOverlay" class="firebase-error-overlay" onclick="closeFirebaseError(event)">
     <div class="cozy-modal" onclick="event.stopPropagation()" style="max-width: 500px;">
         <div class="cozy-modal-header" style="background-color: #FFF3CD;">
             <span class="cozy-modal-title" style="color: #856404; display: flex; align-items: center; gap: 6px; font-weight:700;">
@@ -1112,23 +1112,22 @@ service cloud.firestore {
     </div>
 </div>
 
-<!-- === 4. 커스텀 토스트 알림창 === -->
 <div id="toast" class="toast-container">
     <span id="toastIcon">🔑</span>
     <span id="toastMsg">메시지</span>
 </div>
 
-<!-- Firebase SDK & Web App Logic -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+    // URL 파라미터 기반 appId 주입을 통한 동기화 불일치 차단
     const urlParams = new URLSearchParams(window.location.search);
     const appId = urlParams.get('appId') || (typeof __app_id !== 'undefined' ? __app_id : 'hamsee');
     
-    // 🔗 여기에 회원님의 Firebase 정보가 온전하게 기입되어 보관됩니다.
-    const myFirebaseConfig = {
+    // [배포 설정] 회원님의 소중한 구글 파이어베이스 정보 연동 바인딩 완료
+    const firebaseConfig = {
         apiKey: "AIzaSyBFsS8ivq_y_-ixMvK0nizDOcqKNFpB2vw",
         authDomain: "hamsee-91be9.firebaseapp.com",
         projectId: "hamsee-91be9",
@@ -1143,8 +1142,25 @@ service cloud.firestore {
     let isFirebaseReady = false;
 
     let isMockMode = false;
+    
+    // 💾 로컬 영구 기억 장치에서 데이터 복원하는 로직
     let mockTweets = [];
+    try {
+        mockTweets = JSON.parse(localStorage.getItem('hamsee_mock_tweets') || '[]');
+    } catch(e) { mockTweets = []; }
+
     let mockUsers = {}; 
+    try {
+        mockUsers = JSON.parse(localStorage.getItem('hamsee_mock_users') || '{}');
+    } catch(e) { mockUsers = {}; }
+
+    function saveMockTweetsToStorage() {
+        localStorage.setItem('hamsee_mock_tweets', JSON.stringify(mockTweets));
+    }
+
+    function saveMockUsersToStorage() {
+        localStorage.setItem('hamsee_mock_users', JSON.stringify(mockUsers));
+    }
 
     let currentUser = {
         uid: "local-user",
@@ -1249,13 +1265,13 @@ service cloud.firestore {
             }
         }
         if (!activeConfig) {
-            activeConfig = myFirebaseConfig;
+            activeConfig = firebaseConfig;
         }
         if (!activeConfig || !activeConfig.apiKey || activeConfig.apiKey === "" || activeConfig.apiKey.includes("YOUR_API_KEY")) {
             console.warn("No active Firebase config found. Activated local mock mode.");
             isMockMode = true;
             document.getElementById('devDeployWarning').style.display = 'block';
-            checkAutoLogin(); // 💾 로컬 가상 모드에서도 자동 로그인 체크 작동
+            checkAutoLogin(); 
             return;
         }
 
@@ -1277,7 +1293,6 @@ service cloud.firestore {
                     isFirebaseReady = true;
                     console.log("hamsee: Live server initialized on appId:", appId);
                     
-                    // 💾 사용자가 수동 입장을 성급히 눌렀을 때 비동기 로딩 대기 상태 해결
                     if (state.roomCode) {
                         startFeedSync();
                         startUsersSync();
@@ -1304,7 +1319,6 @@ service cloud.firestore {
         const savedBio = localStorage.getItem('hamsee_bio');
         const savedSns = localStorage.getItem('hamsee_sns');
 
-        // URL 파라미터 방 코드가 있으면 자동 로그인 코드보다 우선 연동 처리
         const urlRoom = urlParams.get('room');
         const targetRoom = urlRoom || savedRoom;
 
@@ -1315,7 +1329,6 @@ service cloud.firestore {
             if (savedSns) currentUser.sns = savedSns;
             state.roomCode = targetRoom;
 
-            // 곧바로 게이트 창을 스킵하고 아지트 직행 개방
             gateScreen.style.display = 'none';
             mainScreen.style.display = 'flex';
             roomCodeText.innerText = `코드: ${targetRoom}`;
@@ -1347,7 +1360,6 @@ service cloud.firestore {
         currentUser.avatar = selectedTempAvatar;
         state.roomCode = code;
 
-        // 💾 로그인을 통과하면 기기 로컬 저장소에 계정 정보를 반영구 영구 소장 기록
         localStorage.setItem('hamsee_username', customName);
         localStorage.setItem('hamsee_roomcode', code);
         localStorage.setItem('hamsee_avatar', selectedTempAvatar);
@@ -1497,7 +1509,6 @@ service cloud.firestore {
         currentUser.bio = newBio || "자기소개가 비어있습니다찍.";
         currentUser.sns = newSns;
 
-        // 💾 수정된 프로필 정보 역시 기기 브라우저 기억 데이터베이스에 덮어쓰기 백업
         localStorage.setItem('hamsee_username', newName);
         localStorage.setItem('hamsee_avatar', selectedTempAvatar);
         localStorage.setItem('hamsee_bio', currentUser.bio);
@@ -1525,6 +1536,7 @@ service cloud.firestore {
     async function syncUserProfile() {
         if (isMockMode || !db) {
             mockUsers[currentUser.uid] = { ...currentUser };
+            saveMockUsersToStorage();
             return;
         }
         try {
@@ -1541,6 +1553,7 @@ service cloud.firestore {
             console.error("Profile sync failed:", err);
             isMockMode = true;
             mockUsers[currentUser.uid] = { ...currentUser };
+            saveMockUsersToStorage();
         }
     }
 
@@ -1614,7 +1627,6 @@ service cloud.firestore {
             renderTweets(filtered);
         }, (err) => {
             console.error("Firestore onSnapshot error:", err);
-            // 🚨 무한 루프 극복: 구독 중 오류(보안권한 등) 발생 시 무한 로딩을 즉시 중단하고 오프라인 전용 가상모드로 안전 폴백 처리!
             feedLoader.style.display = 'none';
             isMockMode = true;
             document.getElementById('devDeployWarning').style.display = 'block';
@@ -1659,6 +1671,7 @@ service cloud.firestore {
             const tweet = mockTweets.find(t => t.id === id);
             if (tweet) {
                 tweet.content = text;
+                saveMockTweetsToStorage();
                 renderTweets(mockTweets);
             }
             return;
@@ -1692,6 +1705,7 @@ service cloud.firestore {
         if (isMockMode) {
             mockTweets = mockTweets.filter(t => t.id !== id);
             state.allTweets = mockTweets;
+            saveMockTweetsToStorage();
             renderTweets(mockTweets);
             return;
         }
@@ -1846,6 +1860,7 @@ service cloud.firestore {
             newTweet.createdAt = Date.now();
             mockTweets.unshift(newTweet);
             state.allTweets = mockTweets;
+            saveMockTweetsToStorage(); 
             renderTweets(mockTweets);
         } else {
             try {
@@ -1859,6 +1874,7 @@ service cloud.firestore {
                 newTweet.createdAt = Date.now();
                 mockTweets.unshift(newTweet);
                 state.allTweets = mockTweets;
+                saveMockTweetsToStorage(); 
                 renderTweets(mockTweets);
             }
         }
@@ -1880,6 +1896,7 @@ service cloud.firestore {
                 } else {
                     tweet.likes[myId] = true;
                 }
+                saveMockTweetsToStorage(); 
                 renderTweets(mockTweets);
             }
             return;
@@ -1931,6 +1948,7 @@ service cloud.firestore {
             if (tweet) {
                 if (!tweet.comments) tweet.comments = [];
                 tweet.comments.push(newComment);
+                saveMockTweetsToStorage(); 
                 renderTweets(mockTweets);
             }
             commentInput.value = '';
@@ -2001,7 +2019,7 @@ service cloud.firestore {
 
         const matchedTweets = state.allTweets.filter(t => t.authorId === userId);
         const postsListContainer = document.getElementById('pagePostsList');
-        postsListContainer.innerHTML = '';
+        if (postsListContainer) { postsListContainer.innerHTML = ''; }
 
         if (matchedTweets.length === 0) {
             postsListContainer.innerHTML = `
@@ -2053,6 +2071,7 @@ service cloud.firestore {
         } else {
             date = new Date(timestamp);
         }
+
         const now = new Date();
         const diffMs = now - date;
         const diffMin = Math.floor(diffMs / 60000);
@@ -2091,7 +2110,7 @@ service cloud.firestore {
     window.onload = function() {
         setupFirebase();
         
-        // 초대 링크 연동 확인
+        const urlParams = new URLSearchParams(window.location.search);
         const urlRoom = urlParams.get('room');
         if (urlRoom) {
             entryCodeInput.value = urlRoom;
