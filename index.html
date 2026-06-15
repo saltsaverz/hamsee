@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hamsee 🐹</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Pretendard 폰트 불러오기 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <style>
+        :root {
+            --bg-color: #FDFBF7;       /* 눈이 편안한 미색/베이지 */
+            --card-color: #FFFFFF;     /* 글 카드 백그라운드 */
+            --border-color: #EFECE6;   /* 미니멀한 라인 */
+            --text-main: #333230;      /* 짙은 브라운 톤 블랙 */
+            --text-muted: #8B8882;     /* 흐린 텍스트 */
+            --accent-color: #F5EFE6;   /* 연한 베이지 포인트 */
+            --heart-color: #F28585;    /* 분홍빛 하트 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 550px;
+            background-color: var(--card-color);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 1. 입장 코드 화면 (극도의 미니멀리즘) */
+        .gate-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+            background-color: var(--bg-color);
+        }
+
+        .gate-logo {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
+            user-select: none;
+        }
+        .gate-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .code-input {
+            width: 100%;
+            max-width: 280px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            background-color: #fff;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+            font-weight: 500;
+        }
+
+        .code-input:focus {
+            border-color: var(--text-main);
+        }
+
+        .gate-btn {
+            width: 100%;
+            max-width: 280px;
+            padding: 12px;
+            background-color: var(--text-main);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .gate-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 2. 메인 타임라인 화면 */
+        .main-container {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        /* 상단 헤더 */
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .header-left-home {
+            cursor: pointer;
+            font-size: 1.6rem;
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .header-left-home:hover {
+            transform: scale(1.15);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .room-code-badge {
+            font-size: 0.75rem;
+            background-color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: var(--text-muted);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .room-code-badge:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+            background-color: #fff;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 20px;
+            transition: background-color 0.2s;
+        }
+        .profile-trigger:hover {
+            background-color: var(--bg-color);
+        }
+        
+        .profile-trigger-avatar {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 프로필 수정 에어리어 (슬라이드형) */
+        .profile-modal {
+            display: none;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px;
+            animation: slideDown 0.25s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .profile-edit-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .avatar-select-wrapper {
+            position: relative;
+            cursor: pointer;
+            margin: 0 auto;
+        }
+
+        .avatar-display {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transition: transform 0.1s;
+            overflow: hidden;
+        }
+
+        .avatar-display img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-display:active {
+            transform: scale(0.95);
+        }
+
+        .avatar-hint {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: var(--text-main);
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-fields-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .name-input, .bio-input, .sns-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .bio-input {
+            resize: none;
+            height: 54px;
+        }
+
+        .save-profile-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--text-main);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .save-profile-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 프로필 이미지 선택 및 업로드 옵션부 */
+        .avatar-picker-grid {
+            display: none;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-top: 8px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .avatar-option {
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background 0.1s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar-option:hover {
+            background-color: var(--bg-color);
+            transform: scale(1.1);
+        }
+
+        .avatar-file-btn {
+            grid-column: span 5;
+            background-color: var(--bg-color);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.15s;
+        }
+        .avatar-file-btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* 옛날 트위터 스타일 글쓰기 폼 */
+        .tweet-form {
+            padding: 16px;
+            border-bottom: 8px solid var(--bg-color);
+            display: flex;
+            gap: 12px;
+            background-color: #fff;
+        }
+
+        .form-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .form-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .form-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tweet-textarea {
+            width: 100%;
+            height: 80px;
+            border: none;
+            resize: none;
+            outline: none;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .tweet-textarea::placeholder {
+            color: #cccba8;
+            opacity: 0.7;
+        }
+
+        .form-bottom {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .char-counter {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .char-counter.warning {
+            color: #d9534f;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            padding: 8px 18px;
+            background-color: var(--text-main);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .submit-btn:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        /* 피드 리스트 */
+        .feed {
+            flex: 1;
+        }
+
+        .tweet-card {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            background-color: #fff;
+            max-height: 1200px;
+            opacity: 1;
+            transform: translateY(0);
+            transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+        }
+        .tweet-card.loading {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            border-bottom-color: transparent;
+        }
+
+        .tweet-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .tweet-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tweet-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .tweet-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .author-name:hover {
+            text-decoration: underline;
+        }
+
+        .tweet-time {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .tweet-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .tweet-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: transform 0.1s ease, color 0.15s ease;
+            padding: 4px;
+        }
+        .action-btn:active {
+            transform: scale(1.15);
+        }
+
+        .heart-icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.2;
+            fill: none;
+            stroke: var(--text-muted);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), fill 0.2s ease, stroke 0.2s ease;
+        }
+        .action-btn:hover .heart-icon {
+            transform: scale(1.15);
+        }
+        .action-btn.liked {
+            color: var(--heart-color);
+            font-weight: 700;
+        }
+        .action-btn.liked .heart-icon {
+            fill: var(--heart-color);
+            stroke: var(--heart-color);
+            transform: scale(1.05);
+        }
+
+        /* 게시글 관리 버튼 구역 (수정/삭제) */
+        .tweet-manage-actions {
+            display: flex;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .manage-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.15s;
+        }
+        .manage-btn:hover {
+            color: var(--text-main);
+            text-decoration: underline;
+        }
+        .manage-btn.delete-btn:hover {
+            color: #D9534F;
+        }
+
+        /* 인라인 수정 및 삭제확인 레이아웃 */
+        .inline-edit-box {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+            background-color: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .inline-edit-textarea {
+            width: 100%;
+            height: 60px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            resize: none;
+        }
+        .inline-edit-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .inline-confirm-delete-box {
+            display: none;
+            background-color: #FFECEB;
+            border: 1px solid #FFAEAA;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #D9534F;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 아기자기한 답글(댓글) 기능 */
+        .comments-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-color);
+        }
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .comment-item {
+            display: flex;
+            gap: 8px;
+            font-size: 0.85rem;
+            align-items: flex-start;
+            background-color: var(--bg-color);
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+        .comment-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .comment-body {
+            flex: 1;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .comment-author {
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+        .comment-author:hover {
+            text-decoration: underline;
+        }
+        .comment-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .comment-text {
+            color: #4A4A48;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+        .comment-form {
+            display: flex;
+            gap: 6px;
+        }
+        .comment-input {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            outline: none;
+            background-color: var(--bg-color);
+        }
+        .comment-btn {
+            background-color: var(--text-main);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* 스피너 및 로더 */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--text-main);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .feed-loader-box {
+            text-align: center;
+            padding: 30px 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .leave-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .leave-btn:hover {
+            background-color: #FFECEB;
+            border-color: #FFAEAA;
+            color: #D9534F;
+        }
+
+        /* 토스트 알림창 */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(51, 50, 48, 0.95);
+            color: #FFF;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .toast-container.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* 단짝 프로필 상세 조회 모달 */
+        .cozy-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .cozy-modal {
+            background-color: #fff;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+            animation: cozyZoom 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        @keyframes cozyZoom {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .cozy-modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-color);
+        }
+
+        .cozy-modal-close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cozy-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .profile-page-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .profile-page-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 2.2rem;
+        }
+
+        .profile-page-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-page-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .profile-page-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .profile-page-bio {
+            font-size: 0.85rem;
+            color: #4A4A48;
+            line-height: 1.4;
+        }
+
+        .profile-page-sns {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            width: fit-content;
+        }
+        .profile-page-sns:hover {
+            color: var(--text-main);
+            text-decoration: underline;
+        }
+
+        .profile-posts-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 6px;
+            margin-top: 8px;
+        }
+
+        .profile-posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .profile-mini-post {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            background-color: #fff;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .profile-mini-post-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- === 1. 입장 코드 입력 화면 === -->
+    <div class="gate-container" id="gateScreen">
+        <div class="gate-logo" id="gateLogo" onclick="playSqueakSound()">🐹</div>
+
+        <!-- 실사용 배포 시 친절히 안내하는 로컬 개발 환경용 경고 바 -->
+        <div id="devDeployWarning" style="display: none; background-color: #FFF3CD; border: 1px solid #FFEBAA; color: #856404; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 0.75rem; text-align: left; max-width: 320px; line-height: 1.45;">
+            ⚠️ <strong>알림:</strong> 현재 로컬 전용(가상 아지트)으로 동작 중입니다. 외부에서 다른 기기의 친구들과 진짜 실시간 소통을 진행하려면, 소스코드 내 <code>myFirebaseConfig</code> 란에 본인의 Firebase 정보를 작성하고 배포해 주세요!
+        </div>
+
+        <input type="text" id="hamsterName" class="code-input" placeholder="별명을 입력하세요" maxlength="10">
+        <input type="password" id="entryCode" class="code-input" placeholder="비밀 코드를 입력하세요" autocomplete="off" onkeydown="if(event.key === 'Enter') validateCode()">
+        <button class="gate-btn" onclick="validateCode()">입장</button>
+    </div>
+
+    <!-- === 2. 메인 트위터형 타임라인 화면 === -->
+    <div class="main-container" id="mainScreen">
+        <header class="header">
+            <!-- 홈 버튼 -->
+            <div class="header-left-home" onclick="clickHomeButton()" title="홈 피드 새로고침">🏠</div>
+            <div class="header-right">
+                <div class="room-code-badge" id="inviteLinkBtn" onclick="copyInviteLink()" title="원클릭 초대 링크 복사">
+                    <span>초대링크</span>
+                    <i data-lucide="link" style="width: 11px; height: 11px;"></i>
+                </div>
+                <div class="room-code-badge" id="roomCodeBtn" onclick="copyInviteCode()" title="방 코드 복사">
+                    <span id="roomCodeText">코드: ****</span>
+                    <i data-lucide="copy" style="width: 11px; height: 11px;"></i>
+                </div>
+                
+                <!-- 내 프로필 관리 트리거 버튼 -->
+                <button class="profile-trigger" onclick="toggleProfileModal()">
+                    <span id="headerAvatar" class="profile-trigger-avatar">🐹</span>
+                    <span id="headerName" style="font-weight:600; font-size:0.9rem;">햄스터</span>
+                </button>
+                <button class="leave-btn" onclick="leaveRoom()">나가기</button>
+            </div>
+        </header>
+
+        <!-- 프로필 수정 슬라이드 폼 -->
+        <div id="profileModal" class="profile-modal">
+            <div class="profile-edit-box">
+                <div class="avatar-select-wrapper" onclick="toggleAvatarPicker()">
+                    <div id="editAvatarDisplay" class="avatar-display">🐹</div>
+                    <div class="avatar-hint">⚙️</div>
+                </div>
+                <div class="edit-fields-grid">
+                    <input type="text" id="editNameInput" class="name-input" placeholder="이름 입력" maxlength="10">
+                    <textarea id="editBioInput" class="bio-input" placeholder="한줄 자기소개를 입력하세요" maxlength="60"></textarea>
+                    <input type="text" id="editSnsInput" class="sns-input" placeholder="SNS 링크 (예: https://instagram.com/userid)">
+                    <button class="save-profile-btn" onclick="saveProfile()">저장 및 변경</button>
+                </div>
+            </div>
+            <!-- 아바타 변경/업로드 패널 -->
+            <div id="avatarPicker" class="avatar-picker-grid">
+                <!-- 이미지 파일 선택기 (숨김) -->
+                <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                <div class="avatar-file-btn" onclick="triggerFileInput()">📁 내 기기에서 사진 올리기</div>
+                <div class="avatar-option" onclick="selectAvatar('🐹')">🐹</div>
+                <div class="avatar-option" onclick="selectAvatar('🐰')">🐰</div>
+                <div class="avatar-option" onclick="selectAvatar('🐱')">🐱</div>
+                <div class="avatar-option" onclick="selectAvatar('🐶')">🐶</div>
+                <div class="avatar-option" onclick="selectAvatar('🦊')">🦊</div>
+                <div class="avatar-option" onclick="selectAvatar('🐻')">🐻</div>
+                <div class="avatar-option" onclick="selectAvatar('🐼')">🐼</div>
+                <div class="avatar-option" onclick="selectAvatar('🐨')">🐨</div>
+            </div>
+        </div>
+
+        <!-- 글쓰기 구역 -->
+        <div class="tweet-form">
+            <div id="formAvatarDisplay" class="form-avatar">🐹</div>
+            <div class="form-right">
+                <textarea id="tweetInput" class="tweet-textarea" placeholder="지금 무슨 일이 일어나고 있나요?" oninput="handleInput()"></textarea>
+                <div class="form-bottom">
+                    <span id="charCount" class="char-counter">0 / 200</span>
+                    <button id="submitBtn" class="submit-btn" onclick="postTweet()" disabled>올리기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 피드 타임라인 -->
+        <div class="feed" id="tweetFeed">
+            <!-- 로딩바 -->
+            <div id="feedLoader" class="feed-loader-box">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">실시간 아지트 채널에 접속 중...</p>
+            </div>
+            
+            <div id="tweetList">
+                <!-- 실시간 및 로컬 데이터가 역순으로 렌더링됩니다 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === 3. 개인 프로필 조회 모달 === -->
+<div id="userProfileOverlay" class="cozy-modal-overlay" onclick="closeUserProfile(event)">
+    <div class="cozy-modal" onclick="event.stopPropagation()">
+        <div class="cozy-modal-header">
+            <span class="cozy-modal-title">🐹 단짝 프로필</span>
+            <button class="cozy-modal-close-btn" onclick="hideUserProfile()">
+                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+        <div class="cozy-modal-body">
+            <div class="profile-page-card">
+                <div class="profile-page-avatar" id="pageAvatar"></div>
+                <div class="profile-page-info">
+                    <span class="profile-page-name" id="pageName">이름</span>
+                    <p class="profile-page-bio" id="pageBio">자기소개글이 없습니다.</p>
+                    <a href="#" target="_blank" class="profile-page-sns" id="pageSns">
+                        <i data-lucide="link" style="width: 12px; height: 12px;"></i>
+                        <span>SNS 링크</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="profile-posts-title" id="postsTitle">작성한 글 모아보기</div>
+            <div class="profile-posts-list" id="pagePostsList">
+                <!-- 사용자가 올린 글 목록 동적 삽입 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === 4. 커스텀 토스트 알림창 === -->
+<div id="toast" class="toast-container">
+    <span id="toastIcon">🔑</span>
+    <span id="toastMsg">메시지</span>
+</div>
+
+<!-- Firebase SDK & Web App Logic -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 🔗 URL 파라미터 기반 appId 주입을 통한 동기화 불일치 차단
+    const urlParams = new URLSearchParams(window.location.search);
+    const appId = urlParams.get('appId') || (typeof __app_id !== 'undefined' ? __app_id : 'hamsee');
+    
+    // [배포 설정] 회원님의 소중한 구글 Firebase 정보가 안전하게 세팅되어 있습니다!
+    const myFirebaseConfig = {
+        apiKey: "AIzaSyBFsS8ivq_y_-ixMvK0nizDOcqKNFpB2vw",
+        authDomain: "hamsee-91be9.firebaseapp.com",
+        projectId: "hamsee-91be9",
+        storageBucket: "hamsee-91be9.firebasestorage.app",
+        messagingSenderId: "552929144383",
+        appId: "1:552929144383:web:f544011f2fd9e88e5e528a"
+    };
+
+    let db = null;
+    let auth = null;
+    let authUser = null;
+    let isFirebaseReady = false;
+
+    // 실서버가 연결되기 전까지 작동하는 로컬 대체 모드
+    let isMockMode = false;
+    let mockTweets = [];
+    let mockUsers = {}; 
+
+    let currentUser = {
+        uid: "local-user",
+        name: "햄스터",
+        avatar: "🐹", 
+        bio: "반가워요 찍! hamsee 아지트에 오신 걸 환영해요 🐹🌻",
+        sns: ""
+    };
+    let selectedTempAvatar = "🐹";
+
+    let state = {
+        roomCode: '',
+        allTweets: [] 
+    };
+
+    // DOM 엘리먼트 참조
+    const gateScreen = document.getElementById('gateScreen');
+    const mainScreen = document.getElementById('mainScreen');
+    const entryCodeInput = document.getElementById('entryCode');
+    const hamsterNameInput = document.getElementById('hamsterName');
+    const roomCodeText = document.getElementById('roomCodeText');
+    
+    const tweetInput = document.getElementById('tweetInput');
+    const charCount = document.getElementById('charCount');
+    const submitBtn = document.getElementById('submitBtn');
+    const tweetList = document.getElementById('tweetList');
+    const feedLoader = document.getElementById('feedLoader');
+
+    // === Web Audio API 효과음 ===
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+    }
+
+    window.playSqueakSound = function() {
+        try {
+            initAudio();
+            if (!audioCtx) return;
+            makeSqueak(0);
+            makeSqueak(0.12);
+        } catch (e) {
+            console.log("Audio play blocked");
+        }
+    }
+
+    function makeSqueak(startTime) {
+        const now = audioCtx.currentTime + startTime;
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(2600, now);
+        osc.frequency.exponentialRampToValueAtTime(5200, now + 0.04);
+        osc.frequency.exponentialRampToValueAtTime(3200, now + 0.08);
+        
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.15, now + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 0.09);
+    }
+
+    window.showToast = function(msg, icon = "🐹") {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        const toastIcon = document.getElementById('toastIcon');
+        
+        toastIcon.innerText = icon;
+        toastMsg.innerText = msg;
+        
+        toast.classList.add('show');
+        playSqueakSound();
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    }
+
+    function getAvatarHtml(avatarValue, sizeClass = "w-full h-full") {
+        if (!avatarValue) return `<span class="${sizeClass} flex items-center justify-center">🐹</span>`;
+        
+        // Base64 이미지인 경우
+        if (avatarValue.startsWith('data:image') || avatarValue.startsWith('http')) {
+            return `<img src="${avatarValue}" class="${sizeClass} rounded-full object-cover" onerror="this.outerHTML='🐹'" />`;
+        }
+        
+        // 이모지인 경우
+        return `<span class="${sizeClass} flex items-center justify-center">${avatarValue}</span>`;
+    }
+
+    async function setupFirebase() {
+        let activeConfig = null;
+        
+        // 플랫폼 자체 주입 환경 설정이 있는지 확인
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            try {
+                activeConfig = JSON.parse(__firebase_config);
+            } catch (err) {
+                console.warn("Could not parse platform firebase config:", err);
+            }
+        }
+
+        // 주입 설정이 없다면 등록한 개인 배포용 설정 적용
+        if (!activeConfig) {
+            activeConfig = myFirebaseConfig;
+        }
+
+        // 유효한 설정이 아예 발견되지 않으면 로컬 가상 아지트로 가동
+        if (!activeConfig || !activeConfig.apiKey || activeConfig.apiKey === "" || activeConfig.apiKey.includes("YOUR_API_KEY")) {
+            console.warn("No active Firebase config found. Activated local mock mode.");
+            isMockMode = true;
+            document.getElementById('devDeployWarning').style.display = 'block';
+            return;
+        }
+
+        try {
+            const app = initializeApp(activeConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    authUser = user;
+                    currentUser.uid = user.uid;
+                    isFirebaseReady = true;
+                    console.log("hamsee: Live server initialized on appId:", appId);
+                    
+                    if (state.roomCode) {
+                        startFeedSync();
+                        startUsersSync();
+                    }
+                }
+            });
+        } catch (err) {
+            console.error("Firebase setup failed. Fallback to mock mode.", err);
+            isMockMode = true;
+            document.getElementById('devDeployWarning').style.display = 'block';
+        }
+    }
+
+    window.validateCode = async function() {
+        const customName = hamsterNameInput.value.trim();
+        const code = entryCodeInput.value.trim();
+
+        if (!customName) {
+            showToast('아지트에서 사용할 별명을 적어주세요!', '🐹');
+            return;
+        }
+
+        if (!code) {
+            showToast('공통 입장 코드를 적어주세요!', '🔑');
+            return;
+        }
+
+        currentUser.name = customName;
+        currentUser.avatar = selectedTempAvatar;
+        state.roomCode = code;
+
+        // 메인 화면 전환
+        gateScreen.style.display = 'none';
+        mainScreen.style.display = 'flex';
+
+        roomCodeText.innerText = `코드: ${code}`;
+        
+        updateProfileUI();
+        await syncUserProfile();
+
+        showToast(`'${code}' 아지트에 들어왔습니다!`, '✨');
+        
+        if (isFirebaseReady || isMockMode) {
+            startFeedSync();
+            startUsersSync();
+        } else {
+            showToast("실시간 네트워크 연결 대기 중...", "🔑");
+        }
+    };
+
+    window.copyInviteLink = function() {
+        const currentAppId = urlParams.get('appId') || (typeof __app_id !== 'undefined' ? __app_id : 'hamsee');
+        const shareUrl = `${window.location.origin}${window.location.pathname}?appId=${currentAppId}&room=${encodeURIComponent(state.roomCode)}`;
+        
+        const tempInput = document.createElement("input");
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        
+        showToast('단짝을 위한 원클릭 초대 링크가 복사되었습니다!', '🔗');
+    }
+
+    window.copyInviteCode = function() {
+        const textToCopy = state.roomCode;
+        
+        const tempInput = document.createElement("input");
+        tempInput.value = textToCopy;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        
+        showToast(`초대방 비밀코드 '${textToCopy}'가 복사되었습니다!`, '🔑');
+    }
+
+    window.leaveRoom = function() {
+        gateScreen.style.display = 'flex';
+        mainScreen.style.display = 'none';
+        state.roomCode = '';
+        tweetInput.value = '';
+        handleInput();
+        
+        showToast('아지트 세션에서 퇴장했습니다.', '🚪');
+    };
+
+    window.toggleProfileModal = function() {
+        const modal = document.getElementById('profileModal');
+        if (modal.style.display === 'block') {
+            modal.style.display = 'none';
+            document.getElementById('avatarPicker').style.display = 'none';
+        } else {
+            modal.style.display = 'block';
+        }
+    };
+
+    window.toggleAvatarPicker = function() {
+        const picker = document.getElementById('avatarPicker');
+        picker.style.display = picker.style.display === 'grid' ? 'none' : 'grid';
+    };
+
+    window.selectAvatar = function(emoji) {
+        selectedTempAvatar = emoji;
+        document.getElementById('editAvatarDisplay').innerHTML = getAvatarHtml(emoji);
+        document.getElementById('avatarPicker').style.display = 'none';
+        playSqueakSound();
+    };
+
+    window.triggerFileInput = function() {
+        document.getElementById('imageFileInput').click();
+    };
+
+    window.handleImageUpload = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 96;
+                canvas.height = 96;
+                
+                const minDim = Math.min(img.width, img.height);
+                const sx = (img.width - minDim) / 2;
+                const sy = (img.height - minDim) / 2;
+                
+                ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, 96, 96);
+                
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                selectedTempAvatar = compressedBase64;
+                document.getElementById('editAvatarDisplay').innerHTML = getAvatarHtml(compressedBase64);
+                document.getElementById('avatarPicker').style.display = 'none';
+                playSqueakSound();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.saveProfile = async function() {
+        const newName = document.getElementById('editNameInput').value.trim();
+        const newBio = document.getElementById('editBioInput').value.trim();
+        const newSns = document.getElementById('editSnsInput').value.trim();
+
+        if (!newName) {
+            showToast("별명을 한 글자 이상 채워주세요!", "⚠️");
+            return;
+        }
+
+        currentUser.name = newName;
+        currentUser.avatar = selectedTempAvatar;
+        currentUser.bio = newBio || "자기소개가 비어있습니다찍.";
+        currentUser.sns = newSns;
+
+        updateProfileUI();
+        await syncUserProfile();
+        toggleProfileModal();
+        
+        showToast("내 프로필 카드를 변경했습니다!", "✨");
+    };
+
+    window.updateProfileUI = function() {
+        document.getElementById('headerAvatar').innerHTML = getAvatarHtml(currentUser.avatar);
+        document.getElementById('headerName').innerText = currentUser.name;
+        
+        document.getElementById('formAvatarDisplay').innerHTML = getAvatarHtml(currentUser.avatar);
+        document.getElementById('editAvatarDisplay').innerHTML = getAvatarHtml(currentUser.avatar);
+        document.getElementById('editNameInput').value = currentUser.name;
+        document.getElementById('editBioInput').value = currentUser.bio;
+        document.getElementById('editSnsInput').value = currentUser.sns;
+        selectedTempAvatar = currentUser.avatar;
+    };
+
+    async function syncUserProfile() {
+        if (isMockMode || !db) {
+            mockUsers[currentUser.uid] = { ...currentUser };
+            return;
+        }
+        try {
+            const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid);
+            await setDoc(userDocRef, {
+                uid: currentUser.uid,
+                name: currentUser.name,
+                avatar: currentUser.avatar,
+                bio: currentUser.bio,
+                sns: currentUser.sns,
+                updatedAt: Date.now()
+            }, { merge: true });
+        } catch (err) {
+            console.error("Profile sync failed:", err);
+        }
+    }
+
+    let usersCache = {};
+    let unsubscribeUsers = null;
+
+    function startUsersSync() {
+        if (isMockMode || !db) return;
+        const usersCol = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+        
+        if (unsubscribeUsers) unsubscribeUsers();
+        unsubscribeUsers = onSnapshot(usersCol, (snapshot) => {
+            snapshot.forEach(doc => {
+                const uData = doc.data();
+                usersCache[doc.id] = uData;
+            });
+        });
+    }
+
+    window.handleInput = function() {
+        let text = tweetInput.value;
+        if (text.length > 200) {
+            text = text.substring(0, 200);
+            tweetInput.value = text;
+        }
+
+        const currentLength = text.trim().length;
+        charCount.innerText = `${text.length} / 200`;
+
+        if (text.length >= 190) {
+            charCount.classList.add('warning');
+        } else {
+            charCount.classList.remove('warning');
+        }
+
+        submitBtn.disabled = (currentLength === 0);
+    };
+
+    let unsubscribeFeed = null;
+    function startFeedSync() {
+        feedLoader.style.display = 'block';
+        tweetList.innerHTML = '';
+
+        if (isMockMode || !db) {
+            setTimeout(() => {
+                feedLoader.style.display = 'none';
+                renderTweets(mockTweets);
+            }, 700);
+            return;
+        }
+
+        const tweetsCol = collection(db, 'artifacts', appId, 'public', 'data', 'tweets');
+
+        if (unsubscribeFeed) unsubscribeFeed();
+        unsubscribeFeed = onSnapshot(tweetsCol, (snapshot) => {
+            let data = [];
+            snapshot.forEach(doc => {
+                data.push({ id: doc.id, ...doc.data() });
+            });
+
+            const filtered = data
+                .filter(t => t.roomCode === state.roomCode)
+                .sort((a, b) => {
+                    const timeA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt || 0;
+                    const timeB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt || 0;
+                    return timeB - timeA;
+                });
+
+            state.allTweets = filtered;
+            feedLoader.style.display = 'none';
+            renderTweets(filtered);
+        }, (err) => {
+            console.error("Firestore onSnapshot error:", err);
+            showToast("실시간 신호를 연결하는 중입니다...", "⏳");
+        });
+    }
+
+    window.clickHomeButton = function() {
+        playSqueakSound();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        document.getElementById('userProfileOverlay').style.display = 'none';
+        document.getElementById('profileModal').style.display = 'none';
+        document.getElementById('avatarPicker').style.display = 'none';
+        
+        showToast('홈 피드로 돌아왔습니다.', '🏠');
+    };
+
+    window.toggleInlineEdit = function(id, content) {
+        const box = document.getElementById(`edit-box-${id}`);
+        const contentEl = document.getElementById(`content-${id}`);
+        if (box.style.display === 'flex') {
+            box.style.display = 'none';
+            contentEl.style.display = 'block';
+        } else {
+            box.style.display = 'flex';
+            contentEl.style.display = 'none';
+            document.getElementById(`edit-textarea-${id}`).value = content;
+        }
+    };
+
+    window.saveInlineEdit = async function(id) {
+        const text = document.getElementById(`edit-textarea-${id}`).value.trim();
+        if (!text) return;
+
+        playSqueakSound();
+
+        if (isMockMode) {
+            const tweet = mockTweets.find(t => t.id === id);
+            if (tweet) {
+                tweet.content = text;
+                renderTweets(mockTweets);
+            }
+            return;
+        }
+
+        try {
+            if (!authUser) return;
+            const tweetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'tweets', id);
+            await updateDoc(tweetDocRef, {
+                content: text
+            });
+            showToast('내 이야기를 수정했습니다!', '✏️');
+        } catch (err) {
+            console.error("Edit failure:", err);
+            showToast('수정에 실패했습니다.', '⚠️');
+        }
+    };
+
+    window.toggleInlineDelete = function(id) {
+        const confirmBox = document.getElementById(`delete-box-${id}`);
+        if (confirmBox.style.display === 'flex') {
+            confirmBox.style.display = 'none';
+        } else {
+            confirmBox.style.display = 'flex';
+        }
+    };
+
+    window.confirmInlineDelete = async function(id) {
+        playSqueakSound();
+
+        if (isMockMode) {
+            mockTweets = mockTweets.filter(t => t.id !== id);
+            state.allTweets = mockTweets;
+            renderTweets(mockTweets);
+            return;
+        }
+
+        try {
+            if (!authUser) return;
+            const tweetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'tweets', id);
+            await deleteDoc(tweetDocRef);
+            showToast('성공적으로 삭제했습니다.', '🗑️');
+        } catch (err) {
+            console.error("Delete failure:", err);
+            showToast('삭제에 실패했습니다.', '⚠️');
+        }
+    };
+
+    function renderTweets(list) {
+        tweetList.innerHTML = '';
+        if (list.length === 0) {
+            tweetList.innerHTML = `
+                <div style="text-align: center; padding: 45px 20px; color: var(--text-muted);">
+                    <p style="font-size: 2.2rem; margin-bottom: 12px;">🌱</p>
+                    <p style="font-size: 0.95rem; font-weight: 600;">welcome to hamsee world</p>
+                </div>
+            `;
+            return;
+        }
+
+        const myId = currentUser.uid;
+
+        list.forEach(tweet => {
+            const hasLiked = tweet.likes && tweet.likes[myId];
+            const likeCount = tweet.likes ? Object.keys(tweet.likes).length : 0;
+            const comments = tweet.comments || [];
+            const timeString = formatTime(tweet.createdAt);
+
+            const cachedAuthor = usersCache[tweet.authorId] || null;
+            const authorName = cachedAuthor ? cachedAuthor.name : tweet.authorName;
+            const authorAvatar = cachedAuthor ? cachedAuthor.avatar : tweet.authorAvatar;
+
+            let commentsHtml = '';
+            comments.forEach(c => {
+                const cachedCommenter = usersCache[c.authorId] || null;
+                const commenterName = cachedCommenter ? cachedCommenter.name : c.authorName;
+                const commenterAvatar = cachedCommenter ? cachedCommenter.avatar : c.authorAvatar;
+
+                commentsHtml += `
+                    <div class="comment-item">
+                        <span class="comment-avatar" onclick="showUserProfile('${c.authorId}')">${getAvatarHtml(commenterAvatar)}</span>
+                        <div class="comment-body">
+                            <div class="comment-header">
+                                <span class="comment-author" onclick="showUserProfile('${c.authorId}')">${escapeHtml(commenterName)}</span>
+                                <span class="comment-time">${formatTime(c.createdAt)}</span>
+                            </div>
+                            <p class="comment-text">${escapeHtml(c.content)}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const isMyPost = (tweet.authorId === myId);
+            const manageHtml = isMyPost ? `
+                <div class="tweet-manage-actions">
+                    <button class="manage-btn" onclick="toggleInlineEdit('${tweet.id}', \`${escapeHtmlForAttr(tweet.content)}\`)">수정</button>
+                    <span>·</span>
+                    <button class="manage-btn delete-btn" onclick="toggleInlineDelete('${tweet.id}')">삭제</button>
+                </div>
+            ` : '';
+
+            const heartIconSvg = `
+                <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            `;
+
+            const card = document.createElement('div');
+            card.className = "tweet-card";
+            card.id = `tweet-${tweet.id}`;
+            card.innerHTML = `
+                <div class="tweet-avatar" onclick="showUserProfile('${tweet.authorId}')">${getAvatarHtml(authorAvatar)}</div>
+                <div class="tweet-body">
+                    <div class="tweet-header">
+                        <div class="tweet-header-left">
+                            <span class="author-name" onclick="showUserProfile('${tweet.authorId}')">${escapeHtml(authorName)}</span>
+                            <span class="tweet-time">· ${timeString}</span>
+                        </div>
+                        ${manageHtml}
+                    </div>
+
+                    <!-- 인라인 수정 폼 -->
+                    <div class="inline-edit-box" id="edit-box-${tweet.id}">
+                        <textarea class="inline-edit-textarea" id="edit-textarea-${tweet.id}"></textarea>
+                        <div class="inline-edit-buttons">
+                            <button class="cozy-btn cozy-btn-secondary" style="padding:4px 10px; font-size:0.75rem;" onclick="toggleInlineEdit('${tweet.id}')">취소</button>
+                            <button class="cozy-btn cozy-btn-primary" style="padding:4px 10px; font-size:0.75rem;" onclick="saveInlineEdit('${tweet.id}')">저장</button>
+                        </div>
+                    </div>
+
+                    <!-- 인라인 삭제 검증 -->
+                    <div class="inline-confirm-delete-box" id="delete-box-${tweet.id}">
+                        <span>정말 삭제할까요찍?</span>
+                        <div style="display:flex; gap:6px;">
+                            <button class="cozy-btn cozy-btn-secondary" style="padding:3px 8px; font-size:0.7rem;" onclick="toggleInlineDelete('${tweet.id}')">취소</button>
+                            <button class="cozy-btn cozy-btn-primary" style="padding:3px 8px; font-size:0.7rem; background-color:#D9534F;" onclick="confirmInlineDelete('${tweet.id}')">삭제</button>
+                        </div>
+                    </div>
+
+                    <div class="tweet-content" id="content-${tweet.id}">${escapeHtml(tweet.content)}</div>
+
+                    <div class="tweet-actions">
+                        <button class="action-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${tweet.id}')">
+                            ${heartIconSvg} <span class="like-count">${likeCount}</span>
+                        </button>
+                        <button class="action-btn" onclick="focusCommentField('${tweet.id}')">
+                            <i data-lucide="message-square" style="width: 17px; height: 17px; display:inline-block; vertical-align:middle;"></i> <span class="comment-count">${comments.length}</span>
+                        </button>
+                    </div>
+
+                    <div class="comments-section">
+                        <div class="comment-list" id="comments-list-${tweet.id}">
+                            ${commentsHtml ? commentsHtml : '<p style="font-size:0.75rem; text-align:center; color:var(--text-muted); padding:6px 0;">첫 답글을 달아 단짝과 대화를 나누어 보세요!</p>'}
+                        </div>
+                        <div class="comment-form">
+                            <input type="text" id="comment-input-${tweet.id}" class="comment-input" placeholder="답글을 남겨보세요..." onkeydown="handleCommentKeyDown(event, '${tweet.id}')">
+                            <button class="comment-btn" onclick="postComment('${tweet.id}')">등록</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            tweetList.appendChild(card);
+        });
+
+        lucide.createIcons();
+    }
+
+    window.postTweet = async function() {
+        const text = tweetInput.value.trim();
+        if (!text) return;
+
+        playSqueakSound();
+
+        const newTweet = {
+            roomCode: state.roomCode,
+            authorId: currentUser.uid,
+            authorName: currentUser.name,
+            authorAvatar: currentUser.avatar, 
+            content: text,
+            likes: {},
+            comments: [],
+            createdAt: isMockMode ? Date.now() : serverTimestamp()
+        };
+
+        if (isMockMode) {
+            newTweet.id = 'mock-' + Date.now();
+            newTweet.createdAt = Date.now();
+            mockTweets.unshift(newTweet);
+            state.allTweets = mockTweets;
+            renderTweets(mockTweets);
+        } else {
+            try {
+                if (!authUser) return;
+                const tweetsCol = collection(db, 'artifacts', appId, 'public', 'data', 'tweets');
+                await addDoc(tweetsCol, newTweet);
+            } catch (err) {
+                console.error("Firebase write failure:", err);
+                isMockMode = true;
+                newTweet.id = 'mock-' + Date.now();
+                newTweet.createdAt = Date.now();
+                mockTweets.unshift(newTweet);
+                state.allTweets = mockTweets;
+                renderTweets(mockTweets);
+            }
+        }
+
+        tweetInput.value = '';
+        handleInput();
+    };
+
+    window.toggleLike = async function(id) {
+        playSqueakSound();
+        const myId = currentUser.uid;
+
+        if (isMockMode) {
+            const tweet = mockTweets.find(t => t.id === id);
+            if (tweet) {
+                if (!tweet.likes) tweet.likes = {};
+                if (tweet.likes[myId]) {
+                    delete tweet.likes[myId];
+                } else {
+                    tweet.likes[myId] = true;
+                }
+                renderTweets(mockTweets);
+            }
+            return;
+        }
+
+        try {
+            if (!authUser) return;
+            const tweetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'tweets', id);
+            const cardEl = document.querySelector(`#tweet-${id} .action-btn`);
+            const wasLiked = cardEl.classList.contains('liked');
+            const fieldPath = `likes.${myId}`;
+
+            await updateDoc(tweetDocRef, {
+                [fieldPath]: wasLiked ? null : true
+            });
+        } catch (err) {
+            console.error("Like toggle failure:", err);
+        }
+    };
+
+    window.focusCommentField = function(id) {
+        document.getElementById(`comment-input-${id}`).focus();
+    };
+
+    window.handleCommentKeyDown = function(event, id) {
+        if (event.key === 'Enter') {
+            postComment(id);
+        }
+    };
+
+    window.postComment = async function(tweetId) {
+        const commentInput = document.getElementById(`comment-input-${tweetId}`);
+        const text = commentInput.value.trim();
+        if (!text) return;
+
+        playSqueakSound();
+
+        const newComment = {
+            id: 'c-' + Date.now(),
+            authorId: currentUser.uid,
+            authorName: currentUser.name,
+            authorAvatar: currentUser.avatar,
+            content: text,
+            createdAt: Date.now()
+        };
+
+        if (isMockMode) {
+            const tweet = mockTweets.find(t => t.id === tweetId);
+            if (tweet) {
+                if (!tweet.comments) tweet.comments = [];
+                tweet.comments.push(newComment);
+                renderTweets(mockTweets);
+            }
+            commentInput.value = '';
+            return;
+        }
+
+        try {
+            if (!authUser) return;
+            const tweetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'tweets', tweetId);
+            
+            let docSnap;
+            const fetchPromise = new Promise((resolve, reject) => {
+                const unsub = onSnapshot(tweetDocRef, (snap) => {
+                    unsub();
+                    resolve(snap);
+                }, reject);
+            });
+
+            docSnap = await fetchPromise;
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const currentComments = data.comments || [];
+                currentComments.push(newComment);
+                await updateDoc(tweetDocRef, {
+                    comments: currentComments
+                });
+            }
+
+            commentInput.value = '';
+        } catch (err) {
+            console.error("Comment post failed:", err);
+        }
+    };
+
+    window.showUserProfile = function(userId) {
+        let uProfile = null;
+        if (isMockMode) {
+            uProfile = userId === currentUser.uid ? currentUser : mockUsers[userId];
+        } else {
+            uProfile = userId === currentUser.uid ? currentUser : usersCache[userId];
+        }
+
+        if (!uProfile) {
+            uProfile = {
+                name: "알 수 없는 햄스터",
+                avatar: "🐹",
+                bio: "프로필 정보 동기화 대기 중 찍..",
+                sns: ""
+            };
+        }
+
+        document.getElementById('pageAvatar').innerHTML = getAvatarHtml(uProfile.avatar);
+        document.getElementById('pageName').innerText = uProfile.name;
+        document.getElementById('pageBio').innerText = uProfile.bio || "아직 작성된 자기소개가 없습니다찍.";
+        
+        const snsEl = document.getElementById('pageSns');
+        if (uProfile.sns && uProfile.sns.trim() !== '') {
+            let url = uProfile.sns.trim();
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+            snsEl.href = url;
+            snsEl.querySelector('span').innerText = uProfile.sns;
+            snsEl.style.display = 'inline-flex';
+        } else {
+            snsEl.style.display = 'none';
+        }
+
+        const matchedTweets = state.allTweets.filter(t => t.authorId === userId);
+        const postsListContainer = document.getElementById('pagePostsList');
+        postsListContainer.innerHTML = '';
+
+        if (matchedTweets.length === 0) {
+            postsListContainer.innerHTML = `
+                <div style="text-align:center; padding: 24px 0; color: var(--text-muted); font-size: 0.85rem;">
+                    작성한 글이 아직 없습니다찍. 🐹🌻
+                </div>
+            `;
+        } else {
+            matchedTweets.forEach(post => {
+                const miniPost = document.createElement('div');
+                miniPost.className = "profile-mini-post";
+                miniPost.innerHTML = `
+                    <p style="white-space: pre-wrap; word-break: break-all;">${escapeHtml(post.content)}</p>
+                    <div class="profile-mini-post-meta">
+                        <span>· ${formatTime(post.createdAt)}</span>
+                        <span>♥ ${post.likes ? Object.keys(post.likes).length : 0}</span>
+                    </div>
+                `;
+                postsListContainer.appendChild(miniPost);
+            });
+        }
+
+        document.getElementById('userProfileOverlay').style.display = 'flex';
+        playSqueakSound();
+        lucide.createIcons();
+    };
+
+    window.hideUserProfile = function() {
+        document.getElementById('userProfileOverlay').style.display = 'none';
+    };
+
+    window.closeUserProfile = function(event) {
+        document.getElementById('userProfileOverlay').style.display = 'none';
+    };
+
+    function formatTime(timestamp) {
+        if (!timestamp) return '방금 전';
+        let date;
+        if (timestamp.seconds) {
+            date = new Date(timestamp.seconds * 1000);
+        } else {
+            date = new Date(timestamp);
+        }
+
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMin = Math.floor(diffMs / 60000);
+        
+        if (diffMin < 1) return '방금 전';
+        if (diffMin < 60) return `${diffMin}분 전`;
+        
+        const diffHrs = Math.floor(diffMin / 60);
+        if (diffHrs < 24) return `${diffHrs}시간 전`;
+        
+        return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function escapeHtmlForAttr(text) {
+        if (!text) return '';
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;")
+            .replace(/`/g, "\\`")
+            .replace(/\n/g, " ");
+    }
+
+    window.onload = function() {
+        setupFirebase();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlRoom = urlParams.get('room');
+        if (urlRoom) {
+            entryCodeInput.value = urlRoom;
+            showToast("초대받은 방 코드가 자동 세팅되었습니다!", "🔗");
+        }
+        
+        lucide.createIcons();
+    };
+
+</script>
+</body>
+</html>
