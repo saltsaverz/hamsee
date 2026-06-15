@@ -936,7 +936,7 @@
     <div class="gate-container" id="gateScreen">
         <div class="gate-logo" id="gateLogo" onclick="playSqueakSound()">🐹</div>
 
-        <!-- 실사용 배포 시 친절히 안내하는 로컬 개발 환경용 경고 바 -->
+        <!-- 개발 가이드 노티 바 -->
         <div id="devDeployWarning" style="display: none; background-color: #FFF3CD; border: 1px solid #FFEBAA; color: #856404; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 0.75rem; text-align: left; max-width: 320px; line-height: 1.45;">
             ⚠️ <strong>알림:</strong> 현재 로컬 전용(가상 아지트)으로 동작 중입니다. 외부에서 다른 기기의 친구들과 진짜 실시간 소통을 진행하려면, 소스코드 내 <code>myFirebaseConfig</code> 란에 본인의 Firebase 정보를 작성하고 배포해 주세요!
         </div>
@@ -986,7 +986,6 @@
             </div>
             <!-- 아바타 변경/업로드 패널 -->
             <div id="avatarPicker" class="avatar-picker-grid">
-                <!-- 이미지 파일 선택기 (숨김) -->
                 <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                 <div class="avatar-file-btn" onclick="triggerFileInput()">📁 내 기기에서 사진 올리기</div>
                 <div class="avatar-option" onclick="selectAvatar('🐹')">🐹</div>
@@ -1021,7 +1020,7 @@
             </div>
             
             <div id="tweetList">
-                <!-- 실시간 및 로컬 데이터가 역순으로 렌더링됩니다 -->
+                <!-- 동적 마운트 -->
             </div>
         </div>
     </div>
@@ -1051,8 +1050,64 @@
             
             <div class="profile-posts-title" id="postsTitle">작성한 글 모아보기</div>
             <div class="profile-posts-list" id="pagePostsList">
-                <!-- 사용자가 올린 글 목록 동적 삽입 -->
+                <!-- 동적 삽입 -->
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- === 5. Firebase 환경 설정 문제 진단 및 튜토리얼 모달 === -->
+<div id="firebaseErrorOverlay" class="cozy-modal-overlay" onclick="closeFirebaseError(event)" style="display: none;">
+    <div class="cozy-modal" onclick="event.stopPropagation()" style="max-width: 500px;">
+        <div class="cozy-modal-header" style="background-color: #FFF3CD;">
+            <span class="cozy-modal-title" style="color: #856404; display: flex; align-items: center; gap: 6px; font-weight:700;">
+                ⚠️ 실시간 서버 연결 오류 안내
+            </span>
+            <button class="cozy-modal-close-btn" onclick="hideFirebaseError()">
+                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+        <div class="cozy-modal-body" style="padding: 20px; font-size: 0.9rem; line-height: 1.6;">
+            <p style="font-weight: 700; margin-bottom: 12px; color: #333230;">서버(Firebase) 데이터베이스와 실시간 교신을 수립할 수 없어 임시로 <span style="color: #D9534F; font-weight: 800;">'로컬 가상 아지트 모드'</span>로 안심 진입시켰습니다.</p>
+            <p style="color: var(--text-muted); margin-bottom: 16px; font-size: 0.85rem;">친구들과 정상적으로 실시간 소통을 진행하시려면 구글 Firebase 프로젝트에서 다음의 3가지가 활성화되었는지 꼭 검수해 주세요.</p>
+            
+            <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span style="background-color: var(--text-main); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">1</span>
+                    <div>
+                        <strong style="color: var(--text-main); font-size:0.85rem;">Firestore DB 생성 여부</strong>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Firebase 콘솔 ➡️ [Firestore Database] 메뉴로 가서 DB 생성을 클릭하셨나요?</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span style="background-color: var(--text-main); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">2</span>
+                    <div>
+                        <strong style="color: var(--text-main); font-size:0.85rem;">익명(Anonymous) 인증 켜기</strong>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">[Authentication] ➡️ [Sign-in method] ➡️ [익명(Anonymous)] 공급자를 사용 설정하셔야 합니다.</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                    <span style="background-color: var(--text-main); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">3</span>
+                    <div>
+                        <strong style="color: var(--text-main); font-size:0.85rem;">보안 규칙(Rules) 열어두기</strong>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">데이터 공유를 위해 Firestore rules 탭을 아래 가이드 규칙으로 교체하셔야 합니다.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="font-size: 0.8rem; color: #856404; background-color: #FFF3CD; padding: 12px; border-radius: 8px; margin-bottom: 16px; border:1px solid #FFEBAA;">
+                💡 <strong>보안 규칙 설정 템플릿 복사:</strong><br>
+                <code style="display: block; background: #fff; padding: 8px; border-radius: 6px; margin-top: 6px; font-size: 0.72rem; word-break: break-all; overflow-x: auto; white-space: pre; border: 1px solid #EFECE6; color:#333;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /artifacts/{appId}/public/data/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</code>
+            </div>
+            
+            <button class="gate-btn" onclick="hideFirebaseError()" style="width: 100%; max-width: none;">가상 모드로 계속 이용하기</button>
         </div>
     </div>
 </div>
@@ -1069,11 +1124,10 @@
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 🔗 URL 파라미터 기반 appId 주입을 통한 동기화 불일치 차단
     const urlParams = new URLSearchParams(window.location.search);
     const appId = urlParams.get('appId') || (typeof __app_id !== 'undefined' ? __app_id : 'hamsee');
     
-    // [배포 설정] 회원님의 소중한 구글 Firebase 정보가 안전하게 세팅되어 있습니다!
+    // 🔗 여기에 회원님의 Firebase 정보가 온전하게 기입되어 보관됩니다.
     const myFirebaseConfig = {
         apiKey: "AIzaSyBFsS8ivq_y_-ixMvK0nizDOcqKNFpB2vw",
         authDomain: "hamsee-91be9.firebaseapp.com",
@@ -1088,7 +1142,6 @@
     let authUser = null;
     let isFirebaseReady = false;
 
-    // 실서버가 연결되기 전까지 작동하는 로컬 대체 모드
     let isMockMode = false;
     let mockTweets = [];
     let mockUsers = {}; 
@@ -1180,20 +1233,14 @@
 
     function getAvatarHtml(avatarValue, sizeClass = "w-full h-full") {
         if (!avatarValue) return `<span class="${sizeClass} flex items-center justify-center">🐹</span>`;
-        
-        // Base64 이미지인 경우
         if (avatarValue.startsWith('data:image') || avatarValue.startsWith('http')) {
             return `<img src="${avatarValue}" class="${sizeClass} rounded-full object-cover" onerror="this.outerHTML='🐹'" />`;
         }
-        
-        // 이모지인 경우
         return `<span class="${sizeClass} flex items-center justify-center">${avatarValue}</span>`;
     }
 
     async function setupFirebase() {
         let activeConfig = null;
-        
-        // 플랫폼 자체 주입 환경 설정이 있는지 확인
         if (typeof __firebase_config !== 'undefined' && __firebase_config) {
             try {
                 activeConfig = JSON.parse(__firebase_config);
@@ -1201,17 +1248,14 @@
                 console.warn("Could not parse platform firebase config:", err);
             }
         }
-
-        // 주입 설정이 없다면 등록한 개인 배포용 설정 적용
         if (!activeConfig) {
             activeConfig = myFirebaseConfig;
         }
-
-        // 유효한 설정이 아예 발견되지 않으면 로컬 가상 아지트로 가동
         if (!activeConfig || !activeConfig.apiKey || activeConfig.apiKey === "" || activeConfig.apiKey.includes("YOUR_API_KEY")) {
             console.warn("No active Firebase config found. Activated local mock mode.");
             isMockMode = true;
             document.getElementById('devDeployWarning').style.display = 'block';
+            checkAutoLogin(); // 💾 로컬 가상 모드에서도 자동 로그인 체크 작동
             return;
         }
 
@@ -1233,16 +1277,56 @@
                     isFirebaseReady = true;
                     console.log("hamsee: Live server initialized on appId:", appId);
                     
+                    // 💾 사용자가 수동 입장을 성급히 눌렀을 때 비동기 로딩 대기 상태 해결
                     if (state.roomCode) {
                         startFeedSync();
                         startUsersSync();
+                    } else {
+                        checkAutoLogin();
                     }
+                } else {
+                    isFirebaseReady = false;
                 }
             });
         } catch (err) {
             console.error("Firebase setup failed. Fallback to mock mode.", err);
             isMockMode = true;
             document.getElementById('devDeployWarning').style.display = 'block';
+            checkAutoLogin();
+        }
+    }
+
+    // 💾 브라우저 기기 저장소(localStorage) 기반 자동 로그인 복원 헬퍼
+    async function checkAutoLogin() {
+        const savedName = localStorage.getItem('hamsee_username');
+        const savedRoom = localStorage.getItem('hamsee_roomcode');
+        const savedAvatar = localStorage.getItem('hamsee_avatar');
+        const savedBio = localStorage.getItem('hamsee_bio');
+        const savedSns = localStorage.getItem('hamsee_sns');
+
+        // URL 파라미터 방 코드가 있으면 자동 로그인 코드보다 우선 연동 처리
+        const urlRoom = urlParams.get('room');
+        const targetRoom = urlRoom || savedRoom;
+
+        if (savedName && targetRoom) {
+            currentUser.name = savedName;
+            currentUser.avatar = savedAvatar || "🐹";
+            if (savedBio) currentUser.bio = savedBio;
+            if (savedSns) currentUser.sns = savedSns;
+            state.roomCode = targetRoom;
+
+            // 곧바로 게이트 창을 스킵하고 아지트 직행 개방
+            gateScreen.style.display = 'none';
+            mainScreen.style.display = 'flex';
+            roomCodeText.innerText = `코드: ${targetRoom}`;
+
+            updateProfileUI();
+            await syncUserProfile();
+
+            if (isFirebaseReady || isMockMode) {
+                startFeedSync();
+                startUsersSync();
+            }
         }
     }
 
@@ -1254,7 +1338,6 @@
             showToast('아지트에서 사용할 별명을 적어주세요!', '🐹');
             return;
         }
-
         if (!code) {
             showToast('공통 입장 코드를 적어주세요!', '🔑');
             return;
@@ -1264,10 +1347,15 @@
         currentUser.avatar = selectedTempAvatar;
         state.roomCode = code;
 
-        // 메인 화면 전환
+        // 💾 로그인을 통과하면 기기 로컬 저장소에 계정 정보를 반영구 영구 소장 기록
+        localStorage.setItem('hamsee_username', customName);
+        localStorage.setItem('hamsee_roomcode', code);
+        localStorage.setItem('hamsee_avatar', selectedTempAvatar);
+        localStorage.setItem('hamsee_bio', currentUser.bio);
+        localStorage.setItem('hamsee_sns', currentUser.sns);
+
         gateScreen.style.display = 'none';
         mainScreen.style.display = 'flex';
-
         roomCodeText.innerText = `코드: ${code}`;
         
         updateProfileUI();
@@ -1279,7 +1367,17 @@
             startFeedSync();
             startUsersSync();
         } else {
-            showToast("실시간 네트워크 연결 대기 중...", "🔑");
+            showToast("실시간 네트워크를 확인하고 있습니다...", "⏳");
+            // ⏳ 레이스 컨디션 방지: 5초 후에도 서버 미연결 상태일 시 안전을 위해 즉시 오프라인 가상 모드로 직결 전환
+            setTimeout(() => {
+                if (!isFirebaseReady && !isMockMode) {
+                    console.warn("Firebase connection timeout. Autoshifting to mock mode.");
+                    isMockMode = true;
+                    document.getElementById('devDeployWarning').style.display = 'block';
+                    document.getElementById('firebaseErrorOverlay').style.display = 'flex';
+                    startFeedSync();
+                }
+            }, 5000);
         }
     };
 
@@ -1299,7 +1397,6 @@
 
     window.copyInviteCode = function() {
         const textToCopy = state.roomCode;
-        
         const tempInput = document.createElement("input");
         tempInput.value = textToCopy;
         document.body.appendChild(tempInput);
@@ -1310,14 +1407,23 @@
         showToast(`초대방 비밀코드 '${textToCopy}'가 복사되었습니다!`, '🔑');
     }
 
+    // 아지트 완전히 로그아웃 및 나가기 (명시적 나가기 클릭 시에만 기기 기억 소멸)
     window.leaveRoom = function() {
+        localStorage.removeItem('hamsee_username');
+        localStorage.removeItem('hamsee_roomcode');
+        localStorage.removeItem('hamsee_avatar');
+        localStorage.removeItem('hamsee_bio');
+        localStorage.removeItem('hamsee_sns');
+
         gateScreen.style.display = 'flex';
         mainScreen.style.display = 'none';
         state.roomCode = '';
+        hamsterNameInput.value = '';
+        entryCodeInput.value = '';
         tweetInput.value = '';
         handleInput();
         
-        showToast('아지트 세션에서 퇴장했습니다.', '🚪');
+        showToast('아지트 기억 세션을 지우고 퇴장했습니다.', '🚪');
     };
 
     window.toggleProfileModal = function() {
@@ -1391,6 +1497,12 @@
         currentUser.bio = newBio || "자기소개가 비어있습니다찍.";
         currentUser.sns = newSns;
 
+        // 💾 수정된 프로필 정보 역시 기기 브라우저 기억 데이터베이스에 덮어쓰기 백업
+        localStorage.setItem('hamsee_username', newName);
+        localStorage.setItem('hamsee_avatar', selectedTempAvatar);
+        localStorage.setItem('hamsee_bio', currentUser.bio);
+        localStorage.setItem('hamsee_sns', currentUser.sns);
+
         updateProfileUI();
         await syncUserProfile();
         toggleProfileModal();
@@ -1427,6 +1539,8 @@
             }, { merge: true });
         } catch (err) {
             console.error("Profile sync failed:", err);
+            isMockMode = true;
+            mockUsers[currentUser.uid] = { ...currentUser };
         }
     }
 
@@ -1443,6 +1557,8 @@
                 const uData = doc.data();
                 usersCache[doc.id] = uData;
             });
+        }, (err) => {
+            console.warn("Firestore user list sync quiet error:", err);
         });
     }
 
@@ -1452,7 +1568,6 @@
             text = text.substring(0, 200);
             tweetInput.value = text;
         }
-
         const currentLength = text.trim().length;
         charCount.innerText = `${text.length} / 200`;
 
@@ -1461,7 +1576,6 @@
         } else {
             charCount.classList.remove('warning');
         }
-
         submitBtn.disabled = (currentLength === 0);
     };
 
@@ -1500,7 +1614,13 @@
             renderTweets(filtered);
         }, (err) => {
             console.error("Firestore onSnapshot error:", err);
-            showToast("실시간 신호를 연결하는 중입니다...", "⏳");
+            // 🚨 무한 루프 극복: 구독 중 오류(보안권한 등) 발생 시 무한 로딩을 즉시 중단하고 오프라인 전용 가상모드로 안전 폴백 처리!
+            feedLoader.style.display = 'none';
+            isMockMode = true;
+            document.getElementById('devDeployWarning').style.display = 'block';
+            document.getElementById('firebaseErrorOverlay').style.display = 'flex';
+            showToast("보안 허가 장애로 임시 오프라인 전환!", "⚠️");
+            renderTweets(mockTweets);
         });
     }
 
@@ -1511,6 +1631,7 @@
         document.getElementById('userProfileOverlay').style.display = 'none';
         document.getElementById('profileModal').style.display = 'none';
         document.getElementById('avatarPicker').style.display = 'none';
+        document.getElementById('firebaseErrorOverlay').style.display = 'none';
         
         showToast('홈 피드로 돌아왔습니다.', '🏠');
     };
@@ -1659,21 +1780,19 @@
                         ${manageHtml}
                     </div>
 
-                    <!-- 인라인 수정 폼 -->
                     <div class="inline-edit-box" id="edit-box-${tweet.id}">
                         <textarea class="inline-edit-textarea" id="edit-textarea-${tweet.id}"></textarea>
                         <div class="inline-edit-buttons">
-                            <button class="cozy-btn cozy-btn-secondary" style="padding:4px 10px; font-size:0.75rem;" onclick="toggleInlineEdit('${tweet.id}')">취소</button>
-                            <button class="cozy-btn cozy-btn-primary" style="padding:4px 10px; font-size:0.75rem;" onclick="saveInlineEdit('${tweet.id}')">저장</button>
+                            <button class="cozy-btn cozy-btn-secondary" style="padding:4px 10px; font-size:0.75rem; border:1px solid var(--border-color); border-radius:8px; background:#fff; cursor:pointer;" onclick="toggleInlineEdit('${tweet.id}')">취소</button>
+                            <button class="cozy-btn cozy-btn-primary" style="padding:4px 10px; font-size:0.75rem; border:none; border-radius:8px; background:var(--text-main); color:#fff; cursor:pointer;" onclick="saveInlineEdit('${tweet.id}')">저장</button>
                         </div>
                     </div>
 
-                    <!-- 인라인 삭제 검증 -->
                     <div class="inline-confirm-delete-box" id="delete-box-${tweet.id}">
                         <span>정말 삭제할까요찍?</span>
                         <div style="display:flex; gap:6px;">
-                            <button class="cozy-btn cozy-btn-secondary" style="padding:3px 8px; font-size:0.7rem;" onclick="toggleInlineDelete('${tweet.id}')">취소</button>
-                            <button class="cozy-btn cozy-btn-primary" style="padding:3px 8px; font-size:0.7rem; background-color:#D9534F;" onclick="confirmInlineDelete('${tweet.id}')">삭제</button>
+                            <button class="cozy-btn cozy-btn-secondary" style="padding:3px 8px; font-size:0.7rem; border:1px solid var(--border-color); border-radius:6px; background:#fff; cursor:pointer;" onclick="toggleInlineDelete('${tweet.id}')">취소</button>
+                            <button class="cozy-btn cozy-btn-primary" style="padding:3px 8px; font-size:0.7rem; border:none; border-radius:6px; background:#D9534F; color:#fff; cursor:pointer;" onclick="confirmInlineDelete('${tweet.id}')">삭제</button>
                         </div>
                     </div>
 
@@ -1918,6 +2037,14 @@
         document.getElementById('userProfileOverlay').style.display = 'none';
     };
 
+    window.hideFirebaseError = function() {
+        document.getElementById('firebaseErrorOverlay').style.display = 'none';
+    };
+
+    window.closeFirebaseError = function(event) {
+        document.getElementById('firebaseErrorOverlay').style.display = 'none';
+    };
+
     function formatTime(timestamp) {
         if (!timestamp) return '방금 전';
         let date;
@@ -1926,7 +2053,6 @@
         } else {
             date = new Date(timestamp);
         }
-
         const now = new Date();
         const diffMs = now - date;
         const diffMin = Math.floor(diffMs / 60000);
@@ -1965,7 +2091,7 @@
     window.onload = function() {
         setupFirebase();
         
-        const urlParams = new URLSearchParams(window.location.search);
+        // 초대 링크 연동 확인
         const urlRoom = urlParams.get('room');
         if (urlRoom) {
             entryCodeInput.value = urlRoom;
