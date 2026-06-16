@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hamsee 🐹</title>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Pretendard 폰트 불러오기 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
@@ -161,29 +163,6 @@
             background-color: #fff;
         }
 
-        .profile-trigger {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: none;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            padding: 4px 10px;
-            border-radius: 20px;
-            transition: background-color 0.2s;
-        }
-        .profile-trigger:hover {
-            background-color: var(--bg-color);
-        }
-        
-        .profile-trigger-avatar {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         /* 프로필 수정 에어리어 (슬라이드형) */
         .profile-modal {
             display: none;
@@ -213,45 +192,7 @@
             margin: 0 auto;
         }
 
-        .avatar-display {
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            background-color: #fff;
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            transition: transform 0.1s;
-            overflow: hidden;
-        }
-
-        .avatar-display img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .avatar-display:active {
-            transform: scale(0.95);
-        }
-
-        .avatar-hint {
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            background: var(--text-main);
-            color: #fff;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        /* 에딧 필드 구성 */
         .edit-fields-grid {
             display: flex;
             flex-direction: column;
@@ -347,26 +288,6 @@
             background-color: #fff;
         }
 
-        .form-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-        
-        .form-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .form-right {
             flex: 1;
             display: flex;
@@ -449,27 +370,6 @@
             opacity: 0;
             transform: translateY(-20px);
             border-bottom-color: transparent;
-        }
-
-        .tweet-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .tweet-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .tweet-body {
@@ -616,20 +516,23 @@
             align-items: center;
         }
 
-        /* 아기자기한 답글(댓글) 기능 */
+        /* 아기자기한 답글(댓글) 기능 (기본 비활성, 토글형) */
         .comments-section {
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px dashed var(--border-color);
+            display: none; /* 클릭해야 열림 */
         }
         .comment-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
             margin-bottom: 10px;
-            max-height: 180px;
+            max-height: 380px;
             overflow-y: auto;
         }
+
+        /* 원본 댓글 상자 */
         .comment-item {
             display: flex;
             gap: 8px;
@@ -638,23 +541,56 @@
             background-color: var(--bg-color);
             padding: 6px 10px;
             border-radius: 8px;
+            margin-bottom: 4px;
         }
-        .comment-avatar {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            flex-shrink: 0;
+
+        /* 대댓글 (답글의 답글) 들여쓰기 상자 */
+        .comment-child-item {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            align-items: flex-start;
+            background-color: #f7f5f0; 
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-left: 28px; /* 들여쓰기 */
+            margin-bottom: 6px;
+            border-left: 2px solid var(--text-muted);
+        }
+
+        .child-indicator {
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-right: 2px;
+        }
+
+        .comment-action-links {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .comment-action-btn {
+            background: none;
+            border: none;
             cursor: pointer;
-            overflow: hidden;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
         }
-        .comment-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .comment-action-btn:hover {
+            color: var(--text-main);
+            text-decoration: underline;
         }
+
+        /* 대댓글 인라인 작성기 */
+        .inline-reply-form {
+            display: none; 
+            margin-left: 28px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            gap: 6px;
+        }
+
         .comment-body {
             flex: 1;
         }
@@ -842,25 +778,6 @@
             border: 1px solid var(--border-color);
         }
 
-        .profile-page-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #fff;
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            font-size: 2.2rem;
-        }
-
-        .profile-page-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         .profile-page-info {
             flex: 1;
             display: flex;
@@ -926,7 +843,7 @@
             justify-content: space-between;
         }
 
-        /* Firebase 환경 문제 진단 안내 모달 */
+        /* Firebase 환경 설정 진단 및 튜토리얼 모달 */
         .firebase-error-overlay {
             display: none;
             position: fixed;
@@ -941,14 +858,55 @@
             align-items: center;
             padding: 20px;
         }
+
+        /* 👑 튀어나오는 프로필 이미지 버그 철벽 해결 전용 순수 CSS 마스크 룰 */
+        .profile-trigger-avatar,
+        .avatar-display,
+        .form-avatar,
+        .tweet-avatar,
+        .comment-avatar,
+        .profile-page-avatar {
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        /* 상세 아바타 폭 크기 고정 */
+        .profile-trigger-avatar { width: 24px; height: 24px; border: none; }
+        .avatar-display { width: 54px; height: 54px; }
+        .form-avatar { width: 40px; height: 40px; }
+        .tweet-avatar { width: 40px; height: 40px; }
+        .comment-avatar { width: 22px; height: 22px; }
+        .profile-page-avatar { width: 60px; height: 60px; }
+
+        /* 자식 이미지 강제 피트 및 둥글게 원형 안으로 가두기 */
+        .profile-trigger-avatar img,
+        .avatar-display img,
+        .form-avatar img,
+        .tweet-avatar img,
+        .comment-avatar img,
+        .profile-page-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+            display: block !important;
+        }
     </style>
 </head>
 <body>
 
 <div id="app">
+    <!-- === 1. 입장 코드 입력 화면 === -->
     <div class="gate-container" id="gateScreen">
         <div class="gate-logo" id="gateLogo" onclick="playSqueakSound()">🐹</div>
 
+        <!-- 실사용 배포 시 친절히 안내하는 로컬 개발 환경용 경고 바 -->
         <div id="devDeployWarning" style="display: none; background-color: #FFF3CD; border: 1px solid #FFEBAA; color: #856404; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 0.75rem; text-align: left; max-width: 320px; line-height: 1.45;">
             ⚠️ <strong>알림:</strong> 현재 로컬 전용(가상 아지트)으로 동작 중입니다. 외부에서 다른 기기의 친구들과 진짜 실시간 소통을 진행하려면, 소스코드 내 <code>firebaseConfig</code> 란에 본인의 Firebase 정보를 작성하고 배포해 주세요!
         </div>
@@ -958,8 +916,10 @@
         <button class="gate-btn" onclick="validateCode()">입장</button>
     </div>
 
+    <!-- === 2. 메인 타임라인 화면 === -->
     <div class="main-container" id="mainScreen">
         <header class="header">
+            <!-- 홈 버튼 -->
             <div class="header-left-home" onclick="clickHomeButton()" title="홈 피드 새로고침">🏠</div>
             <div class="header-right">
                 <div class="room-code-badge" id="inviteLinkBtn" onclick="copyInviteLink()" title="원클릭 초대 링크 복사">
@@ -971,6 +931,7 @@
                     <i data-lucide="copy" style="width: 11px; height: 11px;"></i>
                 </div>
                 
+                <!-- 내 프로필 관리 트리거 버튼 -->
                 <button class="profile-trigger" onclick="toggleProfileModal()">
                     <span id="headerAvatar" class="profile-trigger-avatar">🐹</span>
                     <span id="headerName" style="font-weight:600; font-size:0.9rem;">햄스터</span>
@@ -979,6 +940,7 @@
             </div>
         </header>
 
+        <!-- 프로필 수정 슬라이드 폼 -->
         <div id="profileModal" class="profile-modal">
             <div class="profile-edit-box">
                 <div class="avatar-select-wrapper" onclick="toggleAvatarPicker()">
@@ -992,6 +954,7 @@
                     <button class="save-profile-btn" onclick="saveProfile()">저장 및 변경</button>
                 </div>
             </div>
+            <!-- 아바타 변경/업로드 패널 -->
             <div id="avatarPicker" class="avatar-picker-grid">
                 <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                 <div class="avatar-file-btn" onclick="triggerFileInput()">📁 내 기기에서 사진 올리기</div>
@@ -1006,6 +969,7 @@
             </div>
         </div>
 
+        <!-- 글쓰기 구역 -->
         <div class="tweet-form">
             <div id="formAvatarDisplay" class="form-avatar">🐹</div>
             <div class="form-right">
@@ -1017,18 +981,22 @@
             </div>
         </div>
 
+        <!-- 피드 타임라인 -->
         <div class="feed" id="tweetFeed">
+            <!-- 로딩바 -->
             <div id="feedLoader" class="feed-loader-box">
                 <div class="spinner"></div>
                 <p style="margin-top: 10px;">실시간 아지트 채널에 접속 중...</p>
             </div>
             
             <div id="tweetList">
-                </div>
+                <!-- 동적 마운트 -->
+            </div>
         </div>
     </div>
 </div>
 
+<!-- === 3. 개인 프로필 조회 모달 === -->
 <div id="userProfileOverlay" class="cozy-modal-overlay" onclick="closeUserProfile(event)">
     <div class="cozy-modal" onclick="event.stopPropagation()">
         <div class="cozy-modal-header">
@@ -1052,11 +1020,13 @@
             
             <div class="profile-posts-title" id="postsTitle">작성한 글 모아보기</div>
             <div class="profile-posts-list" id="pagePostsList">
-                </div>
+                <!-- 동적 삽입 -->
+            </div>
         </div>
     </div>
 </div>
 
+<!-- === 5. Firebase 환경 설정 문제 진단 및 튜토리얼 모달 === -->
 <div id="firebaseErrorOverlay" class="firebase-error-overlay" onclick="closeFirebaseError(event)">
     <div class="cozy-modal" onclick="event.stopPropagation()" style="max-width: 500px;">
         <div class="cozy-modal-header" style="background-color: #FFF3CD;">
@@ -1112,11 +1082,13 @@ service cloud.firestore {
     </div>
 </div>
 
+<!-- === 4. 커스텀 토스트 알림창 === -->
 <div id="toast" class="toast-container">
     <span id="toastIcon">🔑</span>
     <span id="toastMsg">메시지</span>
 </div>
 
+<!-- Firebase SDK & Web App Logic -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -1162,8 +1134,18 @@ service cloud.firestore {
         localStorage.setItem('hamsee_mock_users', JSON.stringify(mockUsers));
     }
 
+    // 👑 브라우저 기기 고유 영구 식별자 로더
+    function getPersistentUid() {
+        let uid = localStorage.getItem('hamsee_user_uid');
+        if (!uid) {
+            uid = 'u-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('hamsee_user_uid', uid);
+        }
+        return uid;
+    }
+
     let currentUser = {
-        uid: "local-user",
+        uid: getPersistentUid(), // 💡 언제나 영구 고유 식별자로 확정 시작 (쪼개짐 현상 완벽 방지)
         name: "햄스터",
         avatar: "🐹", 
         bio: "반가워요 찍! hamsee 아지트에 오신 걸 환영해요 🐹🌻",
@@ -1289,7 +1271,6 @@ service cloud.firestore {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     authUser = user;
-                    currentUser.uid = user.uid;
                     isFirebaseReady = true;
                     console.log("hamsee: Live server initialized on appId:", appId);
                     
@@ -1419,7 +1400,7 @@ service cloud.firestore {
         showToast(`초대방 비밀코드 '${textToCopy}'가 복사되었습니다!`, '🔑');
     }
 
-    // 아지트 완전히 로그아웃 및 나가기 (명시적 나가기 클릭 시에만 기기 기억 소멸)
+    // 아지트 완전히 로그아웃 및 나가기
     window.leaveRoom = function() {
         localStorage.removeItem('hamsee_username');
         localStorage.removeItem('hamsee_roomcode');
@@ -1721,6 +1702,98 @@ service cloud.firestore {
         }
     };
 
+    // 댓글창 열기/닫기 토글 기능
+    window.toggleComments = function(tweetId) {
+        const el = document.getElementById(`comments-section-${tweetId}`);
+        if (el.style.display === 'block') {
+            el.style.display = 'none';
+        } else {
+            el.style.display = 'block';
+            const inputField = document.getElementById(`comment-input-${tweetId}`);
+            if (inputField) {
+                inputField.focus();
+            }
+        }
+        playSqueakSound();
+    };
+
+    // 대댓글 인라인 작성기 열기/닫기 토글 기능
+    window.toggleInlineReplyForm = function(tweetId, commentId, authorName) {
+        const form = document.getElementById(`reply-form-${commentId}`);
+        if (form.style.display === 'flex') {
+            form.style.display = 'none';
+        } else {
+            form.style.display = 'flex';
+            const rInput = document.getElementById(`reply-input-${commentId}`);
+            if (rInput) rInput.focus();
+        }
+        playSqueakSound();
+    };
+
+    window.handleReplyKeyDown = function(event, tweetId, parentId) {
+        if (event.key === 'Enter') {
+            postReply(tweetId, parentId);
+        }
+    };
+
+    // 대댓글 작성 처리
+    window.postReply = async function(tweetId, parentId) {
+        const replyInput = document.getElementById(`reply-input-${parentId}`);
+        const text = replyInput.value.trim();
+        if (!text) return;
+
+        playSqueakSound();
+
+        const newComment = {
+            id: 'c-' + Date.now(),
+            authorId: currentUser.uid,
+            authorName: currentUser.name,
+            authorAvatar: currentUser.avatar,
+            content: text,
+            parentId: parentId, // 대댓글 표시용 부모댓글 ID 태깅
+            createdAt: Date.now()
+        };
+
+        if (isMockMode) {
+            const tweet = mockTweets.find(t => t.id === tweetId);
+            if (tweet) {
+                if (!tweet.comments) tweet.comments = [];
+                tweet.comments.push(newComment);
+                saveMockTweetsToStorage();
+                renderTweets(mockTweets);
+            }
+            replyInput.value = '';
+            return;
+        }
+
+        try {
+            if (!authUser) return;
+            const tweetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'tweets', tweetId);
+            
+            let docSnap;
+            const fetchPromise = new Promise((resolve, reject) => {
+                const unsub = onSnapshot(tweetDocRef, (snap) => {
+                    unsub();
+                    resolve(snap);
+                }, reject);
+            });
+
+            docSnap = await fetchPromise;
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const currentComments = data.comments || [];
+                currentComments.push(newComment);
+                await updateDoc(tweetDocRef, {
+                    comments: currentComments
+                });
+            }
+
+            replyInput.value = '';
+        } catch (err) {
+            console.error("Reply post failed:", err);
+        }
+    };
+
     function renderTweets(list) {
         tweetList.innerHTML = '';
         if (list.length === 0) {
@@ -1745,25 +1818,69 @@ service cloud.firestore {
             const authorName = cachedAuthor ? cachedAuthor.name : tweet.authorName;
             const authorAvatar = cachedAuthor ? cachedAuthor.avatar : tweet.authorAvatar;
 
-            let commentsHtml = '';
-            comments.forEach(c => {
-                const cachedCommenter = usersCache[c.authorId] || null;
-                const commenterName = cachedCommenter ? cachedCommenter.name : c.authorName;
-                const commenterAvatar = cachedCommenter ? cachedCommenter.avatar : c.authorAvatar;
+            // 계층 구조로 대댓글 분류 및 매핑 가공
+            const parentComments = comments.filter(c => !c.parentId);
+            const childComments = comments.filter(c => c.parentId);
 
-                commentsHtml += `
-                    <div class="comment-item">
-                        <span class="comment-avatar" onclick="showUserProfile('${c.authorId}')">${getAvatarHtml(commenterAvatar)}</span>
-                        <div class="comment-body">
-                            <div class="comment-header">
-                                <span class="comment-author" onclick="showUserProfile('${c.authorId}')">${escapeHtml(commenterName)}</span>
-                                <span class="comment-time">${formatTime(c.createdAt)}</span>
+            let commentsHtml = '';
+            if (parentComments.length === 0) {
+                commentsHtml = '<p style="font-size:0.75rem; text-align:center; color:var(--text-muted); padding:16px 0;">첫 답글을 달아 단짝과 대화를 나누어 보세요!</p>';
+            } else {
+                parentComments.forEach(c => {
+                    const cachedCommenter = usersCache[c.authorId] || null;
+                    const commenterName = cachedCommenter ? cachedCommenter.name : c.authorName;
+                    const commenterAvatar = cachedCommenter ? cachedCommenter.avatar : c.authorAvatar;
+
+                    // 1. 원댓글 조각 추가
+                    commentsHtml += `
+                        <div class="comment-item-container" id="comment-container-${c.id}">
+                            <div class="comment-item">
+                                <span class="comment-avatar" onclick="showUserProfile('${c.authorId}')">${getAvatarHtml(commenterAvatar)}</span>
+                                <div class="comment-body">
+                                    <div class="comment-header">
+                                        <span class="comment-author" onclick="showUserProfile('${c.authorId}')">${escapeHtml(commenterName)}</span>
+                                        <span class="comment-time">${formatTime(c.createdAt)}</span>
+                                    </div>
+                                    <p class="comment-text">${escapeHtml(c.content)}</p>
+                                    <div class="comment-action-links">
+                                        <button class="comment-action-btn" onclick="toggleInlineReplyForm('${tweet.id}', '${c.id}', '${escapeHtmlForAttr(commenterName)}')">답글 쓰기</button>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="comment-text">${escapeHtml(c.content)}</p>
-                        </div>
-                    </div>
-                `;
-            });
+                            
+                            <!-- 대댓글용 조그만 인라인 답글 입력 폼 -->
+                            <div class="inline-reply-form" id="reply-form-${c.id}">
+                                <input type="text" id="reply-input-${c.id}" class="comment-input" style="font-size:0.8rem; padding:4px 10px;" placeholder="@${escapeHtml(commenterName)}님에게 답글..." onkeydown="handleReplyKeyDown(event, '${tweet.id}', '${c.id}')">
+                                <button class="comment-btn" style="font-size:0.75rem; padding:4px 10px;" onclick="postReply('${tweet.id}', '${c.id}')">등록</button>
+                            </div>
+                    `;
+
+                    // 2. 이 원댓글에 달린 대댓글들의 조각들을 들여쓰기로 묶어서 추가
+                    const children = childComments.filter(cc => cc.parentId === c.id);
+                    children.forEach(cc => {
+                        const cachedChildCommenter = usersCache[cc.authorId] || null;
+                        const childName = cachedChildCommenter ? cachedChildCommenter.name : cc.authorName;
+                        const childAvatar = cachedChildCommenter ? cachedChildCommenter.avatar : cc.authorAvatar;
+
+                        commentsHtml += `
+                            <div class="comment-child-item">
+                                <span class="comment-avatar" style="width:18px; height:18px;" onclick="showUserProfile('${cc.authorId}')">${getAvatarHtml(childAvatar)}</span>
+                                <div class="comment-body">
+                                    <div class="comment-header">
+                                        <span class="comment-author" onclick="showUserProfile('${cc.authorId}')">
+                                            <span class="child-indicator">↳</span> ${escapeHtml(childName)}
+                                        </span>
+                                        <span class="comment-time">${formatTime(cc.createdAt)}</span>
+                                    </div>
+                                    <p class="comment-text">${escapeHtml(cc.content)}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    commentsHtml += `</div>`; // 컨테이너 클로즈
+                });
+            }
 
             const isMyPost = (tweet.authorId === myId);
             const manageHtml = isMyPost ? `
@@ -1816,14 +1933,16 @@ service cloud.firestore {
                         <button class="action-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${tweet.id}')">
                             ${heartIconSvg} <span class="like-count">${likeCount}</span>
                         </button>
-                        <button class="action-btn" onclick="focusCommentField('${tweet.id}')">
+                        <!-- 클릭하면 댓글 영역을 토글하여 개방시킴 -->
+                        <button class="action-btn" onclick="toggleComments('${tweet.id}')">
                             <i data-lucide="message-square" style="width: 17px; height: 17px; display:inline-block; vertical-align:middle;"></i> <span class="comment-count">${comments.length}</span>
                         </button>
                     </div>
 
-                    <div class="comments-section">
+                    <!-- 토글되어 슬라이드 개방될 하위 구역 -->
+                    <div class="comments-section" id="comments-section-${tweet.id}">
                         <div class="comment-list" id="comments-list-${tweet.id}">
-                            ${commentsHtml ? commentsHtml : '<p style="font-size:0.75rem; text-align:center; color:var(--text-muted); padding:6px 0;">첫 답글을 달아 단짝과 대화를 나누어 보세요!</p>'}
+                            ${commentsHtml}
                         </div>
                         <div class="comment-form">
                             <input type="text" id="comment-input-${tweet.id}" class="comment-input" placeholder="답글을 남겨보세요..." onkeydown="handleCommentKeyDown(event, '${tweet.id}')">
@@ -1917,16 +2036,13 @@ service cloud.firestore {
         }
     };
 
-    window.focusCommentField = function(id) {
-        document.getElementById(`comment-input-${id}`).focus();
-    };
-
     window.handleCommentKeyDown = function(event, id) {
         if (event.key === 'Enter') {
             postComment(id);
         }
     };
 
+    // 원댓글 작성
     window.postComment = async function(tweetId) {
         const commentInput = document.getElementById(`comment-input-${tweetId}`);
         const text = commentInput.value.trim();
@@ -2023,8 +2139,8 @@ service cloud.firestore {
 
         if (matchedTweets.length === 0) {
             postsListContainer.innerHTML = `
-                <div style="text-align:center; padding: 24px 0; color: var(--text-muted); font-size: 0.85rem;">
-                    작성한 글이 아직 없습니다찍. 🐹🌻
+                <div style="text-align:center; padding: 24px 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">
+                    [검색 결과 없음]
                 </div>
             `;
         } else {
